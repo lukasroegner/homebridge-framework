@@ -1,0 +1,27 @@
+{
+  "name": "homebridge-framework",
+  "version": "1.0.0",
+  "description": "Framework for easy creation of homebridge plugins.",
+  "license": "MIT",
+  "keywords": [
+    "homebridge",
+    "homebridge-framework"
+  ],
+  "devDependencies": {
+    "typescript": "^3.7.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/lukasroegner/homebridge-framework.git"
+  },
+  "bugs": {
+    "url": "http://github.com/lukasroegner/homebridge-framework/issues"
+  },
+  "files": ["lib/**/*.*"],
+  "prepare" : "npm run build",
+  "types": "lib/index.d.ts",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "tsc"
+  }
+}
