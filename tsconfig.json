@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "module": "amd",
+    "module": "CommonJS",
+    "outDir": "./dist",
+    "rootDir": "./src",
     "declaration": true,
-    "outFile": "./lib/index.js",
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -18,7 +19,5 @@
     "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true
-  },
-  "include": ["src"],
-  "exclude": ["node_modules"]
+  }
 }
