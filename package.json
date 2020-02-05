@@ -8,8 +8,10 @@
     "homebridge-framework"
   ],
   "devDependencies": {
+    "@types/node": "^10",
     "typescript": "^3.7.5",
-    "rimraf": "^3.0.0"
+    "rimraf": "^3.0.0",
+    "hap-nodejs": "^0.5.6"
   },
   "repository": {
     "type": "git",
