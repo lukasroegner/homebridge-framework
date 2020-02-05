@@ -19,7 +19,7 @@ export class Homebridge {
         const registration = new HomebridgePlatformRegistration<TConfiguration>();
 
         // Defines a proxy object which is created by homebridge
-        function Proxy(proxyApi: HomebridgeApi, proxyLogger: Logger, proxyConfiguration: TConfiguration) {
+        function Proxy(proxyLogger: Logger, proxyConfiguration: TConfiguration, proxyApi: HomebridgeApi) {
             registration.api = proxyApi;
             registration.logger = proxyLogger;
             registration.configuration = proxyConfiguration;
