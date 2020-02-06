@@ -1,5 +1,7 @@
 
-import { Accessory } from "hap-nodejs";
+import { HomebridgeApi } from '../types/homebridge-api';
+import { Logger } from '../types/logger';
+import { PlatformAccessory } from '../types/platform-accessory';
 
 /**
  * Represents the registration object of the platform.
@@ -24,5 +26,5 @@ export class HomebridgePlatformRegistration<TConfiguration> {
     /**
      * Gets or sets the cached accessories.
      */
-    public cachedAccessories: Array<Accessory> = new Array<Accessory>();
+    public cachedAccessories: Array<PlatformAccessory> = new Array<PlatformAccessory>();
 }

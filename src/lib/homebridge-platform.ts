@@ -1,6 +1,9 @@
 
 import { HomebridgePlatformRegistration } from './homebridge-platform-registration';
-import { Accessory } from 'hap-nodejs';
+import { Logger } from '../types/logger';
+import { HomebridgeApi } from '../types/homebridge-api';
+import { PlatformAccessory } from '../types/platform-accessory';
+import { DefinedAccessory } from './defined-accessory';
 
 /**
  * Represents the base class for a platform on homebridge. It exposes the homebridge API, logging, configuration and lifecycle events.
@@ -29,6 +32,14 @@ export abstract class HomebridgePlatform<TConfiguration> {
             const result = this.initialize();
             if (result instanceof Promise) {
                 await result;
+            }
+
+            // Removes accessories that are undefined at this point
+            this.removeUndefinedAccessories();
+
+            // Removes services that are undefined at this point
+            for (let definedAccessory of this.definedAccessories) {
+                definedAccessory.removeUndefinedServices();
             }
         });
         this.api.on('shutdown', async () => {
@@ -111,15 +122,54 @@ export abstract class HomebridgePlatform<TConfiguration> {
     /**
      * Contains the cached accessories.
      */
-    private _cachedAccessories: Array<Accessory>|null = null;
+    private _cachedAccessories: Array<PlatformAccessory>|null = null;
 
     /**
      * Gets the cached accessories.
      */
-    public get cachedAccessories(): Array<Accessory> {
+    public get cachedAccessories(): Array<PlatformAccessory> {
         if (this._cachedAccessories == null) {
             throw new Error("The platform has not been registered yet.");
         }
         return this._cachedAccessories;
+    }
+
+    /**
+     * Contains the defined accessories.
+     */
+    private _definedAccessories: Array<DefinedAccessory> = new Array<DefinedAccessory>();
+
+    /**
+     * Gets the defined accessories.
+     */
+    public get definedAccessories(): Array<DefinedAccessory> {
+        return this._definedAccessories;
+    }
+
+    /**
+     * Defines an accessory for usage with the platform. When defining an accessory, it is marked as used and thus not removed from HomeKit after the initialization.
+     * @param name The name that should be displayed in HomeKit.
+     * @param id The identifier of the accessory.
+     * @param subType The sub type of the accessory. May be omitted if the ID is already unique.
+     */
+    public defineAccessory(name: string, id: string, subType?: string): DefinedAccessory {
+
+        // Checks if the accessory has already been defined
+        let definedAccessory = this.definedAccessories.find(a => a.id === id && a.subType === (subType || null));
+        if (definedAccessory) {
+            return definedAccessory;
+        }
+
+        // Creates a new defined accessory and returns it
+        definedAccessory = new DefinedAccessory(this, name, id, subType);
+        this.definedAccessories.push(definedAccessory);
+        return definedAccessory;
+    }
+
+    /**
+     * Unregisters all cached accessories that have not been defined.
+     */
+    public removeUndefinedAccessories() {
+        this.api.unregisterPlatformAccessories(this.pluginName, this.platformName, this.cachedAccessories.filter(c => !this.definedAccessories.some(d => c.context.id === d.id && c.context.subType === d.subType)));
     }
 }

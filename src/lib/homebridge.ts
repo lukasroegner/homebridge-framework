@@ -1,7 +1,9 @@
 
-import { Accessory } from 'hap-nodejs';
 import { HomebridgePlatform } from './homebridge-platform';
 import { HomebridgePlatformRegistration } from './homebridge-platform-registration';
+import { HomebridgeApi } from '../types/homebridge-api';
+import { Logger } from '../types/logger';
+import { PlatformAccessory } from '../types/platform-accessory';
 
 /**
  * Represents the helper for registering the platform.
@@ -29,7 +31,7 @@ export class Homebridge {
         }
 
         // Defines the required configureAccessory function that is called by homebridge
-        Proxy.prototype.configureAccessory = (accessory: Accessory) => {
+        Proxy.prototype.configureAccessory = (accessory: PlatformAccessory) => {
             registration.cachedAccessories.push(accessory);
         }
         
