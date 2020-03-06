@@ -21,11 +21,11 @@ export class Characteristic<TValue extends CharacteristicValue> {
         let hapCharacteristic: HapCharacteristic|null = this.service.hapService.getCharacteristic(<WithUUID<typeof HapCharacteristic>>this.type) || null;
         if (hapCharacteristic) {
             this._hapCharacteristic = hapCharacteristic;
-            return;
-        }
+        } else {
 
-        // Creates the new characteristic
-        this._hapCharacteristic = this.service.hapService.addCharacteristic(this.type);
+            // Creates the new characteristic
+            this._hapCharacteristic = this.service.hapService.addCharacteristic(this.type);
+        }
 
         // Sets the value of the characteristic
         if (value !== undefined) {
