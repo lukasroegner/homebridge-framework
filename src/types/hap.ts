@@ -1,5 +1,5 @@
 
-import { Service as HapService, Characteristic as HapCharacteristic, CharacteristicEventTypes } from 'hap-nodejs';
+import { Service as HapService, Characteristic as HapCharacteristic } from 'hap-nodejs';
 
 /**
  * Represents the interface of the HAP API.
@@ -22,9 +22,4 @@ export declare interface Hap {
      * Gets the characteristic type.
      */
     Characteristic: typeof HapCharacteristic;
-
-    /**
-     * Gets the characteristic type.
-     */
-    CharacteristicEventTypes: typeof CharacteristicEventTypes;
 }

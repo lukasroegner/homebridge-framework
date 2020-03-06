@@ -33,7 +33,7 @@ export class Characteristic<TValue extends CharacteristicValue> {
         }
 
         // Subscribes for changes of the value
-        this.hapCharacteristic.on(this.service.accessory.platform.api.hap.CharacteristicEventTypes.SET, async (value: any, callback: any) => {
+        this.hapCharacteristic.on(<any>'set', async (value: any, callback: any) => {
 
             // Checks if a handler has been set
             if (this.valueChanged == null) {
