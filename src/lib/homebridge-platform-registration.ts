@@ -26,5 +26,5 @@ export class HomebridgePlatformRegistration<TConfiguration> {
     /**
      * Gets or sets the cached accessories.
      */
-    public cachedAccessories: Array<PlatformAccessory> = new Array<PlatformAccessory>();
+    public cachedPlatformAccessories: Array<PlatformAccessory> = new Array<PlatformAccessory>();
 }

@@ -1,5 +1,6 @@
 
 import { PlatformAccessory } from './platform-accessory';
+import { Hap } from './hap';
 
 /**
  * Represents the interface of the homebridge API.
@@ -46,9 +47,5 @@ export declare interface HomebridgeApi {
     /**
      * Gets or sets the HAP API.
      */
-    hap: {
-        uuid: {
-            generate: (seed: string) => string
-        }
-    };
+    hap: Hap;
 }

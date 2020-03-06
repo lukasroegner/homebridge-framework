@@ -1,9 +1,9 @@
 
-import { HomebridgePlatformRegistration } from './homebridge-platform-registration';
 import { Logger } from '../types/logger';
 import { HomebridgeApi } from '../types/homebridge-api';
 import { PlatformAccessory } from '../types/platform-accessory';
-import { DefinedAccessory } from './defined-accessory';
+import { HomebridgePlatformRegistration } from './homebridge-platform-registration';
+import { Accessory } from './accessory';
 
 /**
  * Represents the base class for a platform on homebridge. It exposes the homebridge API, logging, configuration and lifecycle events.
@@ -13,6 +13,7 @@ export abstract class HomebridgePlatform<TConfiguration> {
     /**
      * Is called when the platform is registered.
      * @param registration The registration object that is created during platform registration.
+     * @internal
      */
     public register(registration: HomebridgePlatformRegistration<TConfiguration>) {
         if (registration.api == null || registration.configuration == null || registration.logger == null) {
@@ -23,7 +24,7 @@ export abstract class HomebridgePlatform<TConfiguration> {
         this._api = registration.api;
         this._logger = registration.logger;
         this._configuration = registration.configuration;
-        this._cachedAccessories = registration.cachedAccessories;
+        this._cachedPlatformAccessories = registration.cachedPlatformAccessories;
 
         // Subscribes for the events of the API
         this.api.on('didFinishLaunching', async () => {
@@ -34,12 +35,12 @@ export abstract class HomebridgePlatform<TConfiguration> {
                 await result;
             }
 
-            // Removes accessories that are undefined at this point
-            this.removeUndefinedAccessories();
+            // Removes accessories that are unused at this point
+            this.removeUnusedAccessories();
 
-            // Removes services that are undefined at this point
-            for (let definedAccessory of this.definedAccessories) {
-                definedAccessory.removeUndefinedServices();
+            // Removes services that are unused at this point
+            for (let accessory of this.accessories) {
+                accessory.removeUnusedServices();
             }
         });
         this.api.on('shutdown', async () => {
@@ -81,6 +82,7 @@ export abstract class HomebridgePlatform<TConfiguration> {
 
     /**
      * Gets the homebridge API.
+     * @internal
      */
     public get api(): HomebridgeApi {
         if (this._api == null) {
@@ -122,28 +124,29 @@ export abstract class HomebridgePlatform<TConfiguration> {
     /**
      * Contains the cached accessories.
      */
-    private _cachedAccessories: Array<PlatformAccessory>|null = null;
+    private _cachedPlatformAccessories: Array<PlatformAccessory>|null = null;
 
     /**
      * Gets the cached accessories.
+     * @internal
      */
-    public get cachedAccessories(): Array<PlatformAccessory> {
-        if (this._cachedAccessories == null) {
+    public get cachedPlatformAccessories(): Array<PlatformAccessory> {
+        if (this._cachedPlatformAccessories == null) {
             throw new Error("The platform has not been registered yet.");
         }
-        return this._cachedAccessories;
+        return this._cachedPlatformAccessories;
     }
 
     /**
-     * Contains the defined accessories.
+     * Contains the accessories.
      */
-    private _definedAccessories: Array<DefinedAccessory> = new Array<DefinedAccessory>();
+    private _accessories: Array<Accessory> = new Array<Accessory>();
 
     /**
-     * Gets the defined accessories.
+     * Gets the accessories.
      */
-    public get definedAccessories(): Array<DefinedAccessory> {
-        return this._definedAccessories;
+    public get accessories(): Array<Accessory> {
+        return this._accessories;
     }
 
     /**
@@ -152,24 +155,24 @@ export abstract class HomebridgePlatform<TConfiguration> {
      * @param id The identifier of the accessory.
      * @param subType The sub type of the accessory. May be omitted if the ID is already unique.
      */
-    public defineAccessory(name: string, id: string, subType?: string): DefinedAccessory {
+    public useAccessory(name: string, id: string, subType?: string): Accessory {
 
-        // Checks if the accessory has already been defined
-        let definedAccessory = this.definedAccessories.find(a => a.id === id && a.subType === (subType || null));
-        if (definedAccessory) {
-            return definedAccessory;
+        // Checks if the accessory has already been defined for usage
+        let accessory = this.accessories.find(a => a.id === id && a.subType === (subType || null));
+        if (accessory) {
+            return accessory;
         }
 
-        // Creates a new defined accessory and returns it
-        definedAccessory = new DefinedAccessory(this, name, id, subType);
-        this.definedAccessories.push(definedAccessory);
-        return definedAccessory;
+        // Creates a new accessory and returns it
+        accessory = new Accessory(this, name, id, subType);
+        this.accessories.push(accessory);
+        return accessory;
     }
 
     /**
-     * Unregisters all cached accessories that have not been defined.
+     * Unregisters all cached accessories that have not been defined for usage.
      */
-    public removeUndefinedAccessories() {
-        this.api.unregisterPlatformAccessories(this.pluginName, this.platformName, this.cachedAccessories.filter(c => !this.definedAccessories.some(d => c.context.id === d.id && c.context.subType === d.subType)));
+    public removeUnusedAccessories() {
+        this.api.unregisterPlatformAccessories(this.pluginName, this.platformName, this.cachedPlatformAccessories.filter(c => !this.accessories.some(d => c.context.id === d.id && c.context.subType === d.subType)));
     }
 }

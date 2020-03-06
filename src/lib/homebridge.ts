@@ -4,6 +4,8 @@ import { HomebridgePlatformRegistration } from './homebridge-platform-registrati
 import { HomebridgeApi } from '../types/homebridge-api';
 import { Logger } from '../types/logger';
 import { PlatformAccessory } from '../types/platform-accessory';
+import { Service as HapService, Characteristic as HapCharacteristic } from 'hap-nodejs';
+import { Hap } from '../types/hap';
 
 /**
  * Represents the helper for registering the platform.
@@ -26,18 +28,51 @@ export class Homebridge {
             registration.logger = proxyLogger;
             registration.configuration = proxyConfiguration;
 
+            // Registers a global variable that contains the HAP API, so that in can be easily referenced in the code without having to navigate via the homebridge API
+            (<any>global).homebridgeFrameworkHap = proxyApi.hap;
+
             // Calls the register function so that the objects are registered at the platform
             platform.register(registration);
         }
 
         // Defines the required configureAccessory function that is called by homebridge
         Proxy.prototype.configureAccessory = (accessory: PlatformAccessory) => {
-            registration.cachedAccessories.push(accessory);
+            registration.cachedPlatformAccessories.push(accessory);
         }
         
         // Returns the registration function
         return (api: HomebridgeApi) => {
             api.registerPlatform(platform.pluginName, platform.platformName, Proxy, true);
         };
+    }
+
+    /**
+     * Gets the HAP service types.
+     */
+    public static get Services(): typeof HapService {
+
+        // Checks if the global variable has already been set
+        const hap = (<any>global).homebridgeFrameworkHap as Hap;
+        if (hap === undefined) {
+            throw new Error("The platform has not been registered yet.");
+        }
+
+        // Returns the service type (that contains the actual derived service types)
+        return hap.Service;
+    }
+
+    /**
+     * Gets the HAP characteristic types.
+     */
+    public static get Characteristics(): typeof HapCharacteristic {
+
+        // Checks if the global variable has already been set
+        const hap = (<any>global).homebridgeFrameworkHap as Hap;
+        if (hap === undefined) {
+            throw new Error("The platform has not been registered yet.");
+        }
+
+        // Returns the characteristic type (that contains the actual derived characteristic types)
+        return hap.Characteristic;
     }
 }
