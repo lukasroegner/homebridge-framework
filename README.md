@@ -14,7 +14,7 @@ Besides the stripped-down API that this framework provides, it automatically man
 
 ## Getting Started
 
-Create a new project and add the framework as a `devDependency` to the `package.json` file.
+Create a new project and add the framework (`homebridge-framework`) as a `devDependency` to the NPM `package.json` file.
 
 ## Configuration
 
