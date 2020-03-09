@@ -16,8 +16,13 @@ export abstract class HomebridgePlatform<TConfiguration> {
      * @internal
      */
     public register(registration: HomebridgePlatformRegistration<TConfiguration>) {
-        if (registration.api == null || registration.configuration == null || registration.logger == null) {
+        if (registration.api == null || registration.logger == null) {
             throw new Error("Error while registering the platform.");
+        }
+
+        // Checks if a configuration is provided, i.e. the plugin should be loaded
+        if (registration.configuration == null) {
+            return;
         }
 
         // Sets the api, logger and configuration
