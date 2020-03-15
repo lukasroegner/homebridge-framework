@@ -135,6 +135,13 @@ export class Service {
      */
     public removeUnusedCharacteristics() {
         for (let characteristic of this.hapService.characteristics) {
+
+            // The name characteristic is always used by homebridge
+            if (characteristic.UUID === this.accessory.platform.api.hap.Characteristic.Name.UUID) {
+                continue;
+            }
+
+            // Removes the unused services
             if (!this.characteristics.some(d => characteristic.UUID === d.hapCharacteristic.UUID)) {
                 this.hapService.removeCharacteristic(characteristic);
             }
