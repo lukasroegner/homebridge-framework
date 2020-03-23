@@ -1,6 +1,6 @@
 {
   "name": "homebridge-framework",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Framework for easy creation of homebridge plugins.",
   "license": "MIT",
   "keywords": [

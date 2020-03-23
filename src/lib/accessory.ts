@@ -179,8 +179,14 @@ export class Accessory {
             }
 
             // Removes the unused services
-            if (!this.services.some(d => service.UUID === d.hapService.UUID)) {
-                this.platformAccessory.removeService(service);
+            if (service.subtype) {
+                if (!this.services.some(d => service.UUID === d.hapService.UUID && service.subtype === d.hapService.subtype)) {
+                    this.platformAccessory.removeService(service);
+                }
+            } else {
+                if (!this.services.some(d => service.UUID === d.hapService.UUID && !d.hapService.subtype)) {
+                    this.platformAccessory.removeService(service);
+                }
             }
         }
     }
