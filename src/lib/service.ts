@@ -134,7 +134,8 @@ export class Service {
      * Removes all cached characteristics that have not been defined for usage.
      */
     public removeUnusedCharacteristics() {
-        for (let characteristic of this.hapService.characteristics) {
+        const characteristics = this.hapService.characteristics.slice();
+        for (let characteristic of characteristics) {
 
             // The name characteristic is always used by homebridge
             if (characteristic.UUID === this.accessory.platform.api.hap.Characteristic.Name.UUID) {

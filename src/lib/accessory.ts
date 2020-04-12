@@ -171,7 +171,8 @@ export class Accessory {
      * Removes all cached services that have not been defined for usage.
      */
     public removeUnusedServices() {
-        for (let service of this.platformAccessory.services) {
+        const services = this.platformAccessory.services.slice();
+        for (let service of services) {
 
             // The accessory information service is always required
             if (service.UUID === this.platform.api.hap.Service.AccessoryInformation.UUID) {
