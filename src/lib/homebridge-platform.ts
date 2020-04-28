@@ -1,7 +1,5 @@
 
-import { Logger } from '../types/logger';
-import { HomebridgeApi } from '../types/homebridge-api';
-import { PlatformAccessory } from '../types/platform-accessory';
+import { PlatformAccessory, Logger, API } from 'homebridge';
 import { HomebridgePlatformRegistration } from './homebridge-platform-registration';
 import { Accessory } from './accessory';
 
@@ -83,13 +81,13 @@ export abstract class HomebridgePlatform<TConfiguration> {
     /**
      * Contains the homebridge API.
      */
-    private _api: HomebridgeApi|null = null;
+    private _api: API|null = null;
 
     /**
      * Gets the homebridge API.
      * @internal
      */
-    public get api(): HomebridgeApi {
+    public get api(): API {
         if (this._api == null) {
             throw new Error("The platform has not been registered yet.");
         }

@@ -24,7 +24,7 @@ export class Service {
         // Checks if the service has been cached
         let hapService: HapService|null = null;
         if (this.subType != null) {
-            hapService = this.accessory.platformAccessory.getServiceByUUIDAndSubType(this.type, this.subType) || null;
+            hapService = this.accessory.platformAccessory.getServiceByUUIDAndSubType(<WithUUID<typeof HapService>>this.type, this.subType) || null;
         } else {
             hapService = this.accessory.platformAccessory.getService(<WithUUID<typeof HapService>>this.type) || null;
         }

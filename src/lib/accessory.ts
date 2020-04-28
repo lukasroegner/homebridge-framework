@@ -1,5 +1,5 @@
 
-import { PlatformAccessory } from '../types/platform-accessory';
+import { PlatformAccessory } from 'homebridge';
 import { HomebridgePlatform } from './homebridge-platform';
 import { Service } from './service';
 import { Service as HapService } from 'hap-nodejs';

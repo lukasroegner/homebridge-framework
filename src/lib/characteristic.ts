@@ -18,7 +18,8 @@ export class Characteristic<TValue extends CharacteristicValue> {
         this._type = type;
 
         // Checks if the characteristic has been cached
-        let hapCharacteristic: HapCharacteristic|null = this.service.hapService.getCharacteristic(<WithUUID<typeof HapCharacteristic>>this.type) || null;
+        const hapCharacteristicConstructor: any = this.type;
+        let hapCharacteristic: HapCharacteristic|null = this.service.hapService.getCharacteristic(<WithUUID<new () => HapCharacteristic>>hapCharacteristicConstructor) || null;
         if (hapCharacteristic) {
             this._hapCharacteristic = hapCharacteristic;
         } else {

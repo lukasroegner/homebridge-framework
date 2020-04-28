@@ -1,7 +1,5 @@
 
-import { HomebridgeApi } from '../types/homebridge-api';
-import { Logger } from '../types/logger';
-import { PlatformAccessory } from '../types/platform-accessory';
+import { PlatformAccessory, Logger, API } from 'homebridge';
 
 /**
  * Represents the registration object of the platform.
@@ -11,7 +9,7 @@ export class HomebridgePlatformRegistration<TConfiguration> {
     /**
      * Gets or sets the homebridge API.
      */
-    public api: HomebridgeApi|null = null;
+    public api: API|null = null;
 
     /**
      * Gets or sets the logger.
