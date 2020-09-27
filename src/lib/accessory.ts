@@ -2,7 +2,7 @@
 import { PlatformAccessory } from 'homebridge';
 import { HomebridgePlatform } from './homebridge-platform';
 import { Service } from './service';
-import { Service as HapService } from 'hap-nodejs';
+import { Categories as Category, Service as HapService } from 'hap-nodejs';
 import { AccessoryInformation } from './accessory-information';
 
 /**
@@ -16,27 +16,34 @@ export class Accessory {
      * @param name The name that should be displayed in HomeKit.
      * @param id The identifier of the accessory.
      * @param subType The sub type of the accessory. May be omitted if the ID is already unique.
+     * @param category The category of the accessory, which determines the icon in the Apple Home app.
+     * @param isExternal Determines whether the accessory is an external accessory (in contrast to bridged accessories).
      */
-    constructor(platform: HomebridgePlatform<any>, name: string, id: string, subType?: string) {
+    constructor(platform: HomebridgePlatform<any>, name: string, id: string, subType?: string, category?: Category, isExternal?: boolean) {
         this._platform = platform;
         this._name = name;
         this._id = id;
         this._subType = subType || null;
+        this._isExternal = isExternal || false;
 
         // Checks if the accessory has been cached
-        const platformAccessory = this.platform.cachedPlatformAccessories.find(a => a.context.id === id && a.context.subType === (subType || null));
-        if (platformAccessory) {
-            this._platformAccessory = platformAccessory;
-            return;
+        if (!this.isExternal) {
+            const platformAccessory = this.platform.cachedPlatformAccessories.find(a => a.context.id === id && a.context.subType === (subType || null));
+            if (platformAccessory) {
+                this._platformAccessory = platformAccessory;
+                return;
+            }
         }
 
         // Creates the new accessory
-        this._platformAccessory = new this.platform.api.platformAccessory(name, this.platform.api.hap.uuid.generate(this.uniqueId)) as PlatformAccessory;
+        this._platformAccessory = new this.platform.api.platformAccessory(name, this.platform.api.hap.uuid.generate(this.uniqueId), category) as PlatformAccessory;
         this.platformAccessory.context.id = id;
         this.platformAccessory.context.subType = (subType || null);
 
         // Registers the accessory
-        this.platform.api.registerPlatformAccessories(this.platform.pluginName, this.platform.platformName, [this.platformAccessory]);
+        if (!this.isExternal) {
+            this.platform.api.registerPlatformAccessories(this.platform.pluginName, this.platform.platformName, [this.platformAccessory]);
+        }
     }
 
     /**
@@ -99,6 +106,18 @@ export class Accessory {
      */
     public get subType(): string|null {
         return this._subType;
+    }
+
+    /**
+     * Contains a value that determines whether the accessory is an external accessory (in contrast to bridged accessories).
+     */
+    private _isExternal: boolean = false;
+
+    /**
+     * Gets a value that determines whether the accessory is an external accessory (in contrast to bridged accessories).
+     */
+    public get isExternal(): boolean {
+        return this._isExternal;
     }
 
     /**

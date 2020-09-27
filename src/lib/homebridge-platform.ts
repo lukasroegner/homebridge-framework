@@ -2,6 +2,7 @@
 import { PlatformAccessory, Logger, API } from 'homebridge';
 import { HomebridgePlatformRegistration } from './homebridge-platform-registration';
 import { Accessory } from './accessory';
+import { Categories as Category } from 'hap-nodejs';
 
 /**
  * Represents the base class for a platform on homebridge. It exposes the homebridge API, logging, configuration and lifecycle events.
@@ -44,6 +45,11 @@ export abstract class HomebridgePlatform<TConfiguration> {
             // Removes services that are unused at this point
             for (let accessory of this.accessories) {
                 accessory.removeUnusedServices();
+            }
+
+            // Publishes the external accessories, which must be done at this point, as all services and characteristics have to be configured before publishing
+            if (this.accessories.some(a => a.isExternal)) {
+                this.api.publishExternalAccessories(this.pluginName, this.accessories.filter(a => a.isExternal).map(a => a.platformAccessory));
             }
         });
         this.api.on('shutdown', async () => {
@@ -157,8 +163,10 @@ export abstract class HomebridgePlatform<TConfiguration> {
      * @param name The name that should be displayed in HomeKit.
      * @param id The identifier of the accessory.
      * @param subType The sub type of the accessory. May be omitted if the ID is already unique.
+     * @param category The category of the accessory, which determines the icon in the Apple Home app.
+     * @param isExternal Determines whether the accessory is an external accessory (in contrast to bridged accessories).
      */
-    public useAccessory(name: string, id: string, subType?: string): Accessory {
+    public useAccessory(name: string, id: string, subType?: string, category?: Category, isExternal?: boolean): Accessory {
 
         // Checks if the accessory has already been defined for usage
         let accessory = this.accessories.find(a => a.id === id && a.subType === (subType || null));
@@ -167,9 +175,20 @@ export abstract class HomebridgePlatform<TConfiguration> {
         }
 
         // Creates a new accessory and returns it
-        accessory = new Accessory(this, name, id, subType);
+        accessory = new Accessory(this, name, id, subType, category, isExternal);
         this.accessories.push(accessory);
         return accessory;
+    }
+
+    /**
+     * Defines an external accessory for usage with the platform.
+     * @param name The name that should be displayed in HomeKit.
+     * @param id The identifier of the accessory.
+     * @param subType The sub type of the accessory. May be omitted if the ID is already unique.
+     * @param category The category of the accessory, which determines the icon in the Apple Home app.
+     */
+    public useExternalAccessory(name: string, id: string, subType?: string, category?: Category): Accessory {
+        return this.useAccessory(name, id, subType, category, true);
     }
 
     /**

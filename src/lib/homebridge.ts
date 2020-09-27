@@ -2,7 +2,7 @@
 import { HomebridgePlatform } from './homebridge-platform';
 import { HomebridgePlatformRegistration } from './homebridge-platform-registration';
 import { PlatformAccessory, Logger, API } from 'homebridge';
-import { Service as HapService, Characteristic as HapCharacteristic } from 'hap-nodejs';
+import { Service as HapService, Characteristic as HapCharacteristic, Categories as HapCategory } from 'hap-nodejs';
 
 /**
  * Represents the helper for registering the platform.
@@ -72,5 +72,20 @@ export class Homebridge {
 
         // Returns the characteristic type (that contains the actual derived characteristic types)
         return hap.Characteristic;
+    }
+
+    /**
+     * Gets the HAP categories.
+     */
+    public static get Categories(): typeof HapCategory {
+
+        // Checks if the global variable has already been set
+        const hap = (<any>global).homebridgeFrameworkHap;
+        if (hap === undefined) {
+            throw new Error("The platform has not been registered yet.");
+        }
+
+        // Returns the characteristic type (that contains the actual derived characteristic types)
+        return hap.Categories;
     }
 }
