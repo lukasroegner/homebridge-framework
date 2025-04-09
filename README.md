@@ -2,7 +2,7 @@
 
 This framework provides an easy-to-use wrapper for the homebridge API. It aims to only provide the features that are actually needed to develop a plugin.
 The framework is written in TypeScript and it is recommended to also develop the plugins with this framework in TypeScript.
-Besides the stripped-down API that this framework provides, it automatically manages accessories, services and characteristics. There is no need to explicitely remove those entities from homebridge. If an accessory/service/characteristic is not "used" at runtime, it is removed from homebridge.
+Besides the stripped-down API that this framework provides, it automatically manages accessories, services and characteristics. There is no need to explicitly remove those entities from homebridge. If an accessory/service/characteristic is not "used" at runtime, it is removed from homebridge.
 
 ## Features
 
@@ -48,7 +48,7 @@ export class MyPlatform extends HomebridgePlatform<MyConfigurationInterface> {
         return 'FrameworkSamplePlatform';
     }
 
-    // Overwrite the initialize method. You can either return void, or Promise<void> if you have asyncronous calls here.
+    // Overwrite the initialize method. You can either return void, or Promise<void> if you have asynchronous calls here.
     // "Declare" all your accessories, services and characteristics in this method. 
     // After the execution of this method, the framework will automatically remove all accessories/services/characteristics that
     // have been cached by homebridge but not "declared" while initialization.
